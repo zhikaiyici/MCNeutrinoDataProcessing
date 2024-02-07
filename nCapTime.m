@@ -22,43 +22,45 @@ for ii = 1:8
     hGd = histogram(axGd, tGd,'BinWidth',1, 'DisplayStyle', 'stairs', Normalization = 'pdf');
     hH = histogram(axH, tH,'BinWidth',1, 'DisplayStyle', 'stairs', Normalization = 'pdf');
     h = histogram(axA, t,'BinWidth',1, 'DisplayStyle', 'stairs', Normalization = 'pdf');
+    
+    %%
+    eH = hH.BinEdges;
+    eH = eH(1:end-1) + eH(2:end);
+    eH = eH ./ 2;
+    cH = hH.BinCounts;
+    %%
+    eGd = hGd.BinEdges;
+    eGd = eGd(1:end-1) + eGd(2:end);
+    eGd = eGd ./ 2;
+    cGd = hGd.BinCounts;
+    eGd = eGd(10:end);
+    cGd = cGd(10:end);
+    %%
+    eA = h.BinEdges;
+    eA = eA(1:end-1) + eA(2:end);
+    eA = eA ./ 2;
+    cA = h.BinCounts;
+    eA = eA(60:end);
+    cA = cA(60:end);
+    %%
+    modelFun = @(beta0, x)(beta0(1) / beta0(2) * exp(-x / beta0(2)) + beta0(3));
+    beta0 = [50000; 10; 100];
+    nlmH = fitnlm(eH, cH, modelFun, beta0);
+
+    xx = 0:0.1:400;
+    [ypredH, ypredciH] = predict(nlmH, xx', 'Simultaneous', false);
+    yyaxis(axH, 'right');
+    plot(axH, xx, ypredH);
+    fill(axH, [xx, xx(end:-1:1)], [ypredciH(:,1)', fliplr(ypredciH(:,2)')] ,...
+        'r', FaceAlpha = 0.3, EdgeColor = 'none');
+
+    coef = nlmH.Coefficients.Estimate(2);
+    r2 = nlmH.Rsquared.Adjusted;
+    ci = coefCI(nlmH);
 end
 legend(axGd, nKE);
 legend(axH, nKE);
 legend(axA, nKE);
 set([axGd, axH, axA], 'xlim',[0, 400]);
 hold([axGd, axH, axA], 'off');
-%%
-e = hH.BinEdges;
-e = e(1:end-1) + e(2:end);
-e = e ./ 2;
-c = hH.BinCounts;
-%%
-e = hGd.BinEdges;
-e = e(1:end-1) + e(2:end);
-e = e ./ 2;
-e = e(10:end);
-c = hGd.BinCounts;
-c = c(10:end);
-%%
-e = h.BinEdges;
-e = e(1:end-1) + e(2:end);
-e = e ./ 2;
-c = h.BinCounts;
-e = e(60:end);
-c = c(60:end);
-%%
-modelFun = @(beta0, x)(beta0(1) / beta0(2) * exp(-x / beta0(2)) + beta0(3));
-beta0 = [50000; 10; 100];
-nlm = fitnlm(e, c, modelFun, beta0);
-
-xx = 0:0.01:400;
-[ypred, ypredci] = predict(nlm, xx', 'Simultaneous', false);
-plot(xx, ypred);
-fill([xx, xx(end:-1:1)], [ypredci(:,1)', fliplr(ypredci(:,2)')] ,...
-    'r', FaceAlpha = 0.3, EdgeColor = 'none');
-
-nlm.Coefficients.Estimate(2)
-nlm.Rsquared.Adjusted
-
 
