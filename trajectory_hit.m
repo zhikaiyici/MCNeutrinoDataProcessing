@@ -1,14 +1,23 @@
 clear
 %% 载入数据
-fileName = 'moduleMuEdep(4x4_2e+09_CRY).txt';
-% fileName = 'moduleEdepPrompt(4x4_2e+09_CRY).txt';
-trackFileName = 'moduleMuTrackLength(4x4_2e+09_CRY).txt';
-spectraData_org = importdata(fileName);
-trackData_org = importdata(trackFileName);
-%%
+% fileName = 'moduleMuEdep(4x4_2e+09_CRY).txt';
+% % fileName = 'moduleEdepPrompt(4x4_2e+09_CRY).txt';
+% trackFileName = 'moduleMuTrackLength(4x4_2e+09_CRY).txt';
+% spectraData_org = importdata(fileName);
+% trackData_org = importdata(trackFileName);
+% 
+% arraySize = 4;
+% spectraData = ReshapeDataMatrix(arraySize, spectraData_org);
+% trackData = ReshapeDataMatrix(arraySize, trackData_org);
+
+runCondition = "_4x4_2e+09_CRY";
+dirName = "0" + runCondition + "/";
+fileName = 'moduleMuEdep' + runCondition + '.data';
+trackFileName = 'moduleMuTrackLength' + runCondition + '.data';
+
 arraySize = 4;
-spectraData = ReshapeDataMatrix(arraySize, spectraData_org);
-trackData = ReshapeDataMatrix(arraySize, trackData_org);
+spectraData = ReadBinaryFile(dirName + fileName, arraySize);
+trackData = ReadBinaryFile(dirName + trackFileName, arraySize);
 
 %%
 data = spectraData; yBinEdges = 0:0.5:220; dscrTh = 0.2; width = 8;
