@@ -117,7 +117,7 @@ for ii = 1:length(X)
         
         k = ii;
     else
-    scatter(axV, ii, y, 6, 'filled', 'MarkerFaceColor', fcolor, 'MarkerEdgeColor', 'none');
+        scatter(axV, ii, y, 6, 'filled', 'MarkerFaceColor', fcolor, 'MarkerEdgeColor', 'none');
     end
     hold(axV, "off");
     hold(axR, "off");
@@ -183,9 +183,6 @@ save('hitfit-5-7.mat','wnlm1');
 save('hitfit-8-11.mat','wnlm2');
 
 %%
-linkaxes([axM, axR], 'y');
-linkaxes([axM, axU], 'x');
-linkaxes([axM, axfit], 'xy');
 
 % axR.YTickLabel = '';
 axR.XAxis.Visible = "off";
@@ -195,10 +192,10 @@ axU.XAxis.Visible = "off";
 axU.YAxis.Visible = "off";
 axM.XAxis.Visible = "off";
 axM.YAxis.Visible = "off";
-xlabel(axfit, 'Hit number');
-ylabel(axfit, 'Muon trajectory length / cm');
-xlabel(axV, 'Hit number');
-ylabel(axV, 'Muon trajectory length / cm');
+xlabel(axfit, 'Hit Number');
+ylabel(axfit, 'Muon Trajectory Length / cm');
+xlabel(axV, 'Hit Number');
+ylabel(axV, 'Muon Trajectory Length / cm');
 % set([axM, axR, axU, axV, axfit],...
 %     "XGrid","off", "YGrid", "off", "ZGrid", "off", "Box", "off", ...
 %     'fontname', 'times new roman', 'fontsize', 20);
@@ -207,6 +204,10 @@ myfigstyle([axM, axR, axU, axV, axfit]);
 set([axM, axV], 'ylim', [0, yBinEdges(end)]);
 set(axfit, 'xlim', [0, 16], 'XTick', 2:2:16);
 set(axV, 'xlim', [0, 14], 'XTick', 1:14);
+
+linkaxes([axM, axR], 'y');
+linkaxes([axM, axU], 'x');
+linkaxes([axM, axfit], 'xy');
 
 %%
 orient(vfig, 'landscape');
