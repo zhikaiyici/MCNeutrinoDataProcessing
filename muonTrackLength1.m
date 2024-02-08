@@ -1,10 +1,11 @@
 clear
 %% 载入数据
-trackFileName = 'moduleMuTrackLength(4x4_2e+09_CRY).txt';
-trackData_org = importdata(trackFileName);
-%%
+runCondition = "_4x4_2e+09_CRY";
+dirName = "0" + runCondition + "/";
+trackFileName = 'moduleMuTrackLength' + runCondition + '.data';
+
 arraySize = 4;
-trackData = ReshapeDataMatrix(arraySize, trackData_org);
+trackData = ReadBinaryFile(dirName + trackFileName, arraySize);
 
 %%
 dscrTh = 0.1;
@@ -35,7 +36,7 @@ for ii = 1:inc:nTot
 end
 %%
 meanTL1 = mean(trajectory1);
-stdMTL1 = std(stdMTL1) .* 100;
+stdMTL1 = std(stdMTL1(1:100)) .* 100;
 
 
 

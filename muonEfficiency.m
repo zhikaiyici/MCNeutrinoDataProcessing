@@ -1,10 +1,11 @@
 clear
 %% 载入数据
-fileName = 'moduleMuEdep(4x4_2e+09_CRY).txt';
-spectraData_org = importdata(fileName);
-%%
+runCondition = "_4x4_2e+09_CRY";
+dirName = "0" + runCondition + "/";
+fileName = 'moduleMuEdep' + runCondition + '.data';
+
 arraySize = 4;
-spectraData = ReshapeDataMatrix(arraySize, spectraData_org);
+spectraData = ReadBinaryFile(dirName + fileName, arraySize);
 
 %%
 dscrTh = 0.2;
