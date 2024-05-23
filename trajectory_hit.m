@@ -6,18 +6,23 @@ clear
 % spectraData_org = importdata(fileName);
 % trackData_org = importdata(trackFileName);
 % 
-% arraySize = 4;
+arraySize = 4;
 % spectraData = ReshapeDataMatrix(arraySize, spectraData_org);
 % trackData = ReshapeDataMatrix(arraySize, trackData_org);
 
-runCondition = "_4x4_2e+09_CRY";
+NDLName = "ENDF-VIII.0/";
+array = "_" + num2str(arraySize) + "x" + num2str(arraySize);
+% NDLName = "USE_ONLY_PHOTO_EVAPORATION/";
+runCondition = array + '_2e+09_CRY_ROOF';
+runCondition = array + '_2e+09_CRY_MUON';
+% runCondition = array + '_1e+09_CRY_ROOM';
 dirName = "0" + runCondition + "/";
-fileName = 'moduleMuEdep' + runCondition + '.data';
-trackFileName = 'moduleMuTrackLength' + runCondition + '.data';
+fileName = NDLName + dirName + 'moduleMuEdep' + runCondition + '.data';
+trackFileName = NDLName + dirName + 'moduleMuTrackLength' + runCondition + '.data';
 
 arraySize = 4;
-spectraData = ReadBinaryFile(dirName + fileName, arraySize);
-trackData = ReadBinaryFile(dirName + trackFileName, arraySize);
+spectraData = ReadBinaryFile(fileName, arraySize);
+trackData = ReadBinaryFile(trackFileName, arraySize);
 
 %%
 data = spectraData; yBinEdges = 0:0.5:220; dscrTh = 0.2; width = 8;
@@ -146,7 +151,8 @@ errorbar(axfit, X(1:k), meanY(1:k), stdY(1:k), 'o',...
 % fill([xx, xx(end:-1:1)], [yy - ydelta, fliplr(yy + ydelta)] ,...
 %     'r', FaceAlpha = 0.5, EdgeColor = 'none', FaceColor = fitcolor);
 
-wei = hh.BinCounts ./ length(trajectory);
+% wei = hh.BinCounts ./ length(trajectory);
+wei = stdY ./ meanY;
 % wei = ones(1, 16);
 
 modelFun = @(b,x) b(1).*(1+exp(b(2).*x));
@@ -171,7 +177,7 @@ modelFun = @(b,x) b(1).*(1+exp(b(2).*x));
 start = [240; 0.5];
 wnlm2 = fitnlm(X(8:11)', meanY(8:11)', modelFun, start, 'Weight', wei(8:11)');
 xx = 8:0.001:11;
-[ypred,ypredci] = predict(wnlm2 ,xx', 'Simultaneous', false);
+[ypred, ypredci] = predict(wnlm2 ,xx', 'Simultaneous', false);
 plot(axfit, xx, ypred, Color = fcolor);
 fill(axfit, [xx, xx(end:-1:1)], [ypredci(:,1)', fliplr(ypredci(:,2)')] ,...
     'r', FaceAlpha = falpha, EdgeColor = 'none', FaceColor = fcolor);
@@ -193,26 +199,26 @@ axU.YAxis.Visible = "off";
 axM.XAxis.Visible = "off";
 axM.YAxis.Visible = "off";
 xlabel(axfit, 'Hit Number');
-ylabel(axfit, 'Muon Trajectory Length / cm');
+ylabel(axfit, 'Muon Trajectory Length (cm)');
 xlabel(axV, 'Hit Number');
-ylabel(axV, 'Muon Trajectory Length / cm');
+ylabel(axV, 'Muon Trajectory Length (cm)');
 % set([axM, axR, axU, axV, axfit],...
 %     "XGrid","off", "YGrid", "off", "ZGrid", "off", "Box", "off", ...
 %     'fontname', 'times new roman', 'fontsize', 20);
 myfigstyle([axM, axR, axU, axV, axfit]);
 % set(axV, 'fontsize', 12);
 set([axM, axV], 'ylim', [0, yBinEdges(end)]);
-set(axfit, 'xlim', [0, 16], 'XTick', 2:2:16);
+set([axM, axfit], 'xlim', [0, 16], 'XTick', 2:2:16);
 set(axV, 'xlim', [0, 14], 'XTick', 1:14);
 
-linkaxes([axM, axR], 'y');
-linkaxes([axM, axU], 'x');
+linkaxes([axM, axR, axfit], 'y');
+linkaxes([axM, axU, axfit], 'x');
 linkaxes([axM, axfit], 'xy');
 
 %%
-orient(vfig, 'landscape');
-print(vfig, 'vio','-dpdf');
-orient(pfig, 'landscape');
-print(pfig, 'hit','-dpdf');
-
-
+% % orient(pfig, 'landscape');
+% % print(pfig, 'hit', '-dpdf');
+% % orient(vfig, 'landscape');
+% % print(vfig, 'vio', '-dpdf');
+% exportgraphics(vfig, 'vio.pdf', 'ContentType', 'vector');
+% exportgraphics(pfig, 'hit.pdf', 'ContentType', 'vector');
