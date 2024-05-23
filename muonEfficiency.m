@@ -55,7 +55,7 @@ stdnMu = std(nMu(1:sliceNum));
 stdEffMu = stdnMu .* sliceNum ./ sum(nE(1:sliceNum));
 %%
 nLost = nE - nMu;
-effLost = sum(nLost(1:100)) ./ sum(nE(1:100));
-stdLost = std(nLost(1:100));
-stdEffLost = stdLost .* 100 ./ sum(nE(1:100));
+effLost = sum(nLost(1:sliceNum)) ./ sum(nE(1:sliceNum));
+stdLost = std(nLost(1:sliceNum));
+stdEffLost = stdLost .* sliceNum ./ sum(nE(1:sliceNum));
 
