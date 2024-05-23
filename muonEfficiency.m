@@ -1,22 +1,34 @@
 clear
 %% 载入数据
-runCondition = "_4x4_2e+09_CRY";
-dirName = "0" + runCondition + "/";
-fileName = 'moduleMuEdep' + runCondition + '.data';
-
 arraySize = 4;
-spectraData = ReadBinaryFile(dirName + fileName, arraySize);
+NDLName = "ENDF-VIII.0/";
+% NDLName = "./";
+array = "_" + num2str(arraySize) + "x" + num2str(arraySize);
+% NDLName = "USE_ONLY_PHOTO_EVAPORATION/";
+runCondition = array + '_2e+09_CRY_MUON';
+spectraData_org = [];
+for runID = 0:0
+    dirName = NDLName + num2str(runID) + runCondition + "/";
+    fileName = dirName + 'moduleMuEdep' + runCondition + ".data";
+    spectraData_org = cat(3, spectraData_org, ReadBinaryFile(fileName, arraySize, 0));
+end
+
+spectraData = spectraData_org;
 
 %%
 dscrTh = 0.2;
+sliceNum = 100;
 nTot = size(spectraData, 3);
-inc = floor(nTot ./ 100);
+inc = ceil(nTot ./ sliceNum);
+nE = zeros(sliceNum, 1);
+nMu = zeros(sliceNum, 1);
+e = zeros(sliceNum, 1);
 jj = 1;
-for ii = 1:inc:nTot
+for ii = 0:inc:nTot
     if ii + inc < nTot
-        data = spectraData(:,:,ii:ii + inc);
+        data = spectraData(:,:,ii + 1:ii + inc);
     else
-        data = spectraData(:,:,ii:end);
+        data = spectraData(:,:,ii + 1:end);
     end
     nE(jj, 1)  = size(data, 3);
 
@@ -38,9 +50,9 @@ for ii = 1:inc:nTot
     jj = jj + 1;
 end
 %%
-effMu = sum(nMu(1:100)) ./ sum(nE(1:100));
-stdnMu = std(nMu(1:100));
-stdEffMu = stdnMu .* 100 ./ sum(nE(1:100));
+effMu = sum(nMu(1:sliceNum)) ./ sum(nE(1:sliceNum));
+stdnMu = std(nMu(1:sliceNum));
+stdEffMu = stdnMu .* sliceNum ./ sum(nE(1:sliceNum));
 %%
 nLost = nE - nMu;
 effLost = sum(nLost(1:100)) ./ sum(nE(1:100));
