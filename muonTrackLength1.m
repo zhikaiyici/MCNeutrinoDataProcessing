@@ -1,11 +1,16 @@
 clear
 %% 载入数据
-runCondition = "_4x4_2e+09_CRY";
-dirName = "0" + runCondition + "/";
-trackFileName = 'moduleMuTrackLength' + runCondition + '.data';
-
 arraySize = 4;
-trackData = ReadBinaryFile(dirName + trackFileName, arraySize);
+NDLName = "ENDF-VIII.0/";
+array = "_" + num2str(arraySize) + "x" + num2str(arraySize);
+runCondition = array + '_2e+09_CRY_MUON';
+
+trackData = [];
+for runID = 0:0
+    dirName = NDLName + num2str(runID) + runCondition + "/";
+    fileName = dirName + 'moduleMuTrackLength' + runCondition + ".data";
+    trackData = cat(3, trackData, ReadBinaryFile(fileName, arraySize, 0));
+end
 
 %%
 dscrTh = 0.1;
@@ -22,21 +27,24 @@ trajectory = permute(trajectory, [3,1,2]);
 trajectory1 = trajectory(hit == 1);
 
 nTot = length(trajectory1);
-inc = floor(nTot ./ 100);
+sliceNum = 100;
+meanTL1 = zeros(sliceNum, 1);
+stdMTL1 = zeros(sliceNum, 1);
+inc = ceil(nTot ./ sliceNum);
 jj = 1;
 for ii = 1:inc:nTot
     if ii + inc < nTot
-        data = trajectory1(ii:ii + inc);
+        data = trajectory1(ii + 1:ii + inc);
     else
-        data = trajectory1(ii:end);
+        data = trajectory1(ii + 1:end);
     end
     meanTL1(jj,:) = mean(data);
     stdMTL1(jj,:) = std(data);
     jj = jj + 1;
 end
 %%
-meanTL1 = mean(trajectory1);
-stdMTL1 = std(stdMTL1(1:100)) .* 100;
+meanTL1_ = mean(trajectory1);
+stdMTL1_ = std(trajectory1);
 
 
 
