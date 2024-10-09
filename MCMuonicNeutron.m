@@ -1,13 +1,12 @@
 clear;
 
 arraySize = 4;
-runID = 0;
 NDLName = "ENDF-VIII.0/";
 NDLName = "./";
 array = "_" + num2str(arraySize) + "x" + num2str(arraySize);
 runCondition = array + '_2e+09_CRY_MUON';
 runCondition = array + '_1e+08_CRY';
-% runCondition = array + '_1e+07_MUON';
+% runCondition = array + '_1e+09_MUON';
 % runCondition = array + '_2e+09_CRY_WOROOF';
 
 numFile = 11;

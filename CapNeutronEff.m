@@ -6,11 +6,11 @@ eff_delayed = zeros(numFile, 1);
 eff_capN = zeros(numFile, 1);
 arraySize = 4;
 NDLName = "ENDF-VIII.0/";
-NDLName = "./";
+% NDLName = "./";
 % NDLName = "USE_ONLY_PHOTO_EVAPORATION/";
 array = "_" + num2str(arraySize) + "x" + num2str(arraySize);
 runCondition = array + '_1e+06_NEUTRINO_Random';
-% runCondition = array + '_1e+08_CRY_NEUTRON';
+runCondition = array + '_1e+09_CRY_NEUTRON';
 % runCondition = array + '_1e+06_CRY';
 % runCondition = array + '_1e+06_Li9';
 % runCondition = array + '_1e+06_He8';
@@ -22,9 +22,12 @@ for runID = 0:numFile - 1
     fileName = dirName + 'moduleCapTimeH' + runCondition + ".data";
     capTimeH = ReadBinaryFile(fileName, arraySize);
 
+    fileName = dirName + 'moduleNeutronTrack' + runCondition + ".data";
+    neutronTrack = ReadBinaryFile(fileName, arraySize);
+
     capTime = cat(3, capTimeGd, capTimeH);
     capTime(capTime == 0) = [];
-    eff_capN(runID + 1) = length(capTime) ./ 1e6;
+    eff_capN(runID + 1) = length(capTime) ./ length(neutronTrack);
 
     fileName = dirName + 'moduleEdepDelayGd' + runCondition + ".data";
     delayedGd = ReadBinaryFile(fileName, arraySize);
