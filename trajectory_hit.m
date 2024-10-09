@@ -89,6 +89,11 @@ hh = histogram(axU, hit, 'Normalization', 'probability',...
 vfig = figure('Units','normalized');
 vfig.Position = pfig.Position;
 axV= axes(vfig);
+
+vvfig = figure('Units','normalized');
+vvfig.Position = pfig.Position;
+axVV= axes(vvfig);
+
 X = (ht.XBinEdges(1:end-1) + ht.XBinEdges(2:end)) ./ 2;
 meanY = zeros(size(X));
 stdY = zeros(size(X));
@@ -109,11 +114,14 @@ for ii = 1:length(X)
     stdY(ii) = std(y);
     wei(ii) = length(y) ./ length(trajectory);
     hold(axV, "on");
+    hold(axVV, "on");
     hold(axR, "on");
     if length(y) > 10
         violinchart(axV, x, y, fcolor, 0.3, width, boxwidth);
-        % boxchart(axV, x .* ones(size(y)), y, BoxWidth = 0.2,...
-        %     BoxFaceColor = fcolor, MarkerColor = fcolor, MarkerStyle = '.');
+
+        boxchart(axVV, x .* ones(size(y)), y, BoxWidth = 0.2,...
+             BoxFaceColor = fcolor, MarkerColor = fcolor, MarkerStyle = '.');
+        violinplot(axVV, x, y, FaceColor = fcolor, FaceAlpha = 0.3, LineStyle = "none");
         
         xx = linspace(min(y), max(y), 1000);
         [f, yi] = ksdensity(y, xx);
@@ -125,6 +133,7 @@ for ii = 1:length(X)
         scatter(axV, ii, y, 6, 'filled', 'MarkerFaceColor', fcolor, 'MarkerEdgeColor', 'none');
     end
     hold(axV, "off");
+    hold(axVV, "off");
     hold(axR, "off");
 end
 leg = legend(axR, {num2str((1:k)')});
@@ -211,6 +220,12 @@ set([axM, axV], 'ylim', [0, yBinEdges(end)]);
 set([axM, axfit], 'xlim', [0, 16], 'XTick', 2:2:16);
 set(axV, 'xlim', [0, 14], 'XTick', 1:14);
 
+myfigstyle(axVV);
+xlabel(axVV, 'Hit Number');
+ylabel(axVV, 'Muon Trajectory Length (cm)');
+set(axVV, 'ylim', [0, yBinEdges(end)]);
+set(axVV, 'xlim', [0, 14], 'XTick', 1:14);
+
 linkaxes([axM, axR, axfit], 'y');
 linkaxes([axM, axU, axfit], 'x');
 linkaxes([axM, axfit], 'xy');
@@ -221,4 +236,5 @@ linkaxes([axM, axfit], 'xy');
 % % orient(vfig, 'landscape');
 % % print(vfig, 'vio', '-dpdf');
 % exportgraphics(vfig, 'vio.pdf', 'ContentType', 'vector');
+% exportgraphics(vvfig, 'viop.pdf', 'ContentType', 'vector');
 % exportgraphics(pfig, 'hit.pdf', 'ContentType', 'vector');
